@@ -11,7 +11,7 @@ var Test = React.createClass({
 var StartFrame = React.createClass({
     render: function(){
         var stars = [];
-        var numStars = Math.floor(Math.random()*9)+1;
+        var numStars = this.props.stars;
         for(var i =0; i<numStars;i++){
             stars.push(<i className='fa fa-star'></i>);
         }
@@ -51,11 +51,13 @@ var AnswerFrame = React.createClass({
 
 var NumberFrame = React.createClass({
     render: function(){
-        var numbers = [],className,selectedNumber=this.props.disableNumber;
+        var numbers = [],className,
+        clickEvent = this.props.clicker,
+        selectedNumber=this.props.disableNumber;
         
         for(var i=1;i<=9;i++){
             className = 'number select-'+ (selectedNumber.indexOf(i)>=0);            
-            numbers.push(<div className={className}>{i}</div>);
+            numbers.push(<div className={className} onClick={clickEvent.bind(null,i)}>{i}</div>);
         }
         
         return (<div id="number-frame" className="well">
@@ -66,7 +68,14 @@ var NumberFrame = React.createClass({
 
 var Game = React.createClass({
     getInitialState: function(){
-        return {selectedNumber: [3,5]};  
+        return {selectedNumber: [],
+            stars:Math.floor(Math.random()*9)+1
+        };  
+    },
+    numberClicker: function(clickedNumber){
+        if(this.state.selectedNumber.indexOf(clickedNumber)<0){
+            this.setState({selectedNumber:this.state.selectedNumber.concat(clickedNumber)})
+        }
     },
     render: function(){
         return (
@@ -74,11 +83,11 @@ var Game = React.createClass({
                 <div className="clearfix">
                     <h1>Nine Play</h1>
                     <hr/>
-                    <StartFrame />
+                    <StartFrame stars={this.state.stars}/>
                     <ButtonFrame />
-                    <AnswerFrame numberSelect={this.state.selectedNumber}/>
+                    <AnswerFrame numberSelect={this.state.selectedNumber} />
                 </div>
-                <NumberFrame disableNumber={this.state.selectedNumber} />
+                <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} />
             </div>
         )
     }
