@@ -22,6 +22,10 @@
     float:left;
 }
 
+#number-frame {
+    text-align: center;
+}
+
 #number-frame .number, #answer-frame span{
     display:inline-block;
     margin:0 10px;
