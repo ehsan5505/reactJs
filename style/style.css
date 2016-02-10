@@ -21,3 +21,13 @@
     text-align:center;
     float:left;
 }
+
+#number-frame .number{
+    display:inline-block;
+    margin-left:20px;
+    background-color:lightblue;
+    font-size:1.5em;
+    padding:15px;
+    border-radius:100%;
+    cursor:pointer;
+}

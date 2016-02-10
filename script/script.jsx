@@ -49,15 +49,32 @@ var AnswerFrame = React.createClass({
     }
 });
 
+var NumberFrame = React.createClass({
+    render: function(){
+        var numbers = [];
+        
+        for(var i=1;i<=9;i++){
+            numbers.push(<div className="number">{i}</div>);
+        }
+        
+        return (<div id="number-frame" className="well">
+            {numbers}
+        </div>);
+    }
+})
+
 var Game = React.createClass({
     render: function(){
         return (
-            <div className="clearfix">
-                <h1>Nine Play</h1>
-                <hr/>
-                <StartFrame />
-                <ButtonFrame />
-                <AnswerFrame />
+            <div>
+                <div className="clearfix">
+                    <h1>Nine Play</h1>
+                    <hr/>
+                    <StartFrame />
+                    <ButtonFrame />
+                    <AnswerFrame />
+                </div>
+                <NumberFrame />
             </div>
         )
     }
