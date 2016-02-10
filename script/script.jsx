@@ -10,15 +10,15 @@ var Test = React.createClass({
 
 var StartFrame = React.createClass({
     render: function(){
-        return (
+        var stars = [];
+        var numStars = Math.floor(Math.random()*9)+1;
+        for(var i =0; i<numStars;i++){
+            stars.push(<i className='fa fa-star'></i>);
+        }
+    return (
             <div id="start-frame">
                 <div className="well">
-                    <i className="fa fa-star"></i>
-                    <i className="fa fa-star"></i>
-                    <i className="fa fa-star"></i>
-                    <i className="fa fa-star"></i>
-                    <i className="fa fa-star"></i>
-                    <i className="fa fa-star"></i>
+                    {stars}
                 </div>
             </div>
         )
