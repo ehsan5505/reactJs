@@ -39,10 +39,17 @@ var ButtonFrame = React.createClass({
 
 var AnswerFrame = React.createClass({
     render: function(){
+        var param = this.props;
+        var test = param.numberSelect;
+        var isolated = param.numberSelect.map(function(i){
+            return (
+            <span onClick={param.unclick}>{i}</span>
+            )
+        })
         return (
             <div id="answer-frame">
                 <div className="well">
-                    {this.props.numberSelect}  
+                    {isolated}  
                 </div>
             </div>
         )
@@ -77,6 +84,12 @@ var Game = React.createClass({
             this.setState({selectedNumber:this.state.selectedNumber.concat(clickedNumber)})
         }
     },
+    unselectNumber: function(clickerNumber){
+        var selectNumber = this.state.selectedNumber;
+        var indexSelect = this.state.selectedNumber.indexOf(selectNumber);
+        selectNumber.splice(indexSelect,1);
+        this.setState({selectedNumber: selectNumber});
+    },
     render: function(){
         return (
             <div>
@@ -85,7 +98,7 @@ var Game = React.createClass({
                     <hr/>
                     <StartFrame stars={this.state.stars}/>
                     <ButtonFrame />
-                    <AnswerFrame numberSelect={this.state.selectedNumber} />
+                    <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber} />
                 </div>
                 <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} />
             </div>
