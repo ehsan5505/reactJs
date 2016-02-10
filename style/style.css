@@ -22,12 +22,19 @@
     float:left;
 }
 
-#number-frame .number{
+#number-frame .number, #answer-frame span{
     display:inline-block;
-    margin-left:20px;
-    background-color:lightblue;
+    margin:0 10px;
+    width:40px;
+    text-align:center;
+    background-color:orange;
     font-size:1.5em;
-    padding:15px;
+    padding:05px;
     border-radius:100%;
     cursor:pointer;
+}
+
+#number-frame .select-true{
+    background-color:#c00;
+    cursor:not-allowed;
 }
