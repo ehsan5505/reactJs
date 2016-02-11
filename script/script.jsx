@@ -27,11 +27,26 @@ var StartFrame = React.createClass({
 
 var ButtonFrame = React.createClass({
     render: function(){
-        var disable = this.props.numberSelect.length === 0;
+        var button;
+        var correct = this.props.correct;
+        switch(correct){
+            case true:
+                button = (    <button className="btn btn-success btn-lg" ><i className="fa fa-thumbs-o-up"></i></button>);
+                break;
+            case false:
+                button = (    <button className="btn btn-danger btn-lg" ><i className="fa fa-remove"></i></button>);
+                break;
+            default:
+                var disable = this.props.numberSelect.length === 0;
+            button = (
+                <button className="btn btn-primary btn-lg" disabled={disable} onClick={this.props.checkAnswer} >=</button>
+            )
+        }
+        
         return (
             <div id="button-frame">
                 <div className="button-frame" >
-                    <button className="btn btn-primary btn-lg" disabled={disable} >=</button>
+                    {button}
                 </div>
             </div>
         )
@@ -77,8 +92,18 @@ var NumberFrame = React.createClass({
 var Game = React.createClass({
     getInitialState: function(){
         return {selectedNumber: [],
-            stars:Math.floor(Math.random()*9)+1
+            stars:Math.floor(Math.random()*9)+1,
+            correct: null
         };  
+    },
+    sumOfNumbers: function(){
+        return this.state.selectedNumber.reduce(function(p,n){
+            return (p+n);
+        },0)
+    },
+    checkAnswer: function(){
+        var correct = (this.state.stars === this.sumOfNumbers());
+        this.setState({correct: correct});
     },
     numberClicker: function(clickedNumber){
         if(this.state.selectedNumber.indexOf(clickedNumber)<0){
@@ -98,7 +123,7 @@ var Game = React.createClass({
                     <h1>Nine Play</h1>
                     <hr/>
                     <StartFrame stars={this.state.stars}/>
-                    <ButtonFrame numberSelect={this.state.selectedNumber}/>
+                    <ButtonFrame numberSelect={this.state.selectedNumber} correct={this.state.correct} checkAnswer={this.checkAnswer} />
                     <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber} />
                 </div>
                 <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} />
