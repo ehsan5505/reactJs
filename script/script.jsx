@@ -31,10 +31,10 @@ var ButtonFrame = React.createClass({
         var correct = this.props.correct;
         switch(correct){
             case true:
-                button = (    <button className="btn btn-success btn-lg" ><i className="fa fa-thumbs-o-up"></i></button>);
+                button = (    <button className="btn btn-success btn-lg" onClick={this.props.reset} ><i className="fa fa-thumbs-o-up"></i></button>);
                 break;
             case false:
-                button = (    <button className="btn btn-danger btn-lg" ><i className="fa fa-remove"></i></button>);
+                button = (    <button className="btn btn-danger btn-lg" onClick={this.props.reset} ><i className="fa fa-remove"></i></button>);
                 break;
             default:
                 var disable = this.props.numberSelect.length === 0;
@@ -76,10 +76,11 @@ var NumberFrame = React.createClass({
     render: function(){
         var numbers = [],className,
         clickEvent = this.props.clicker,
-        selectedNumber=this.props.disableNumber;
-        
+        selectedNumber=this.props.disableNumber,
+        resetValue = this.props.resetValue;
         for(var i=1;i<=9;i++){
-            className = 'number select-'+ (selectedNumber.indexOf(i)>=0);            
+            className = 'number select-'+ (selectedNumber.indexOf(i)>=0);
+            className = 'number used-'+ (resetValue.indexOf(i)>=0);            
             numbers.push(<div className={className} onClick={clickEvent.bind(null,i)}>{i}</div>);
         }
         
@@ -93,7 +94,8 @@ var Game = React.createClass({
     getInitialState: function(){
         return {selectedNumber: [],
             stars:Math.floor(Math.random()*9)+1,
-            correct: null
+            correct: null,
+            resetValue: []
         };  
     },
     sumOfNumbers: function(){
@@ -107,14 +109,24 @@ var Game = React.createClass({
     },
     numberClicker: function(clickedNumber){
         if(this.state.selectedNumber.indexOf(clickedNumber)<0){
-            this.setState({selectedNumber:this.state.selectedNumber.concat(clickedNumber)})
+            this.setState({selectedNumber:this.state.selectedNumber.concat(clickedNumber),
+                correct:null
+            })
         }
     },
     unselectNumber: function(clickerNumber){
         var selectNumber = this.state.selectedNumber;
         var indexSelect = this.state.selectedNumber.indexOf(selectNumber);
         selectNumber.splice(indexSelect,1);
-        this.setState({selectedNumber: selectNumber});
+        this.setState({selectedNumber: selectNumber,correct:null});
+        
+    },
+    resetGame: function(){
+        //new define value of selected
+        var reset = this.state.resetValue.concat(this.state.selectedNumber);
+        this.setState({resetValue:reset,selectedNumber:[],
+        correct:null,
+        stars:Math.floor(Math.random()*9)+1});
     },
     render: function(){
         return (
@@ -123,10 +135,10 @@ var Game = React.createClass({
                     <h1>Nine Play</h1>
                     <hr/>
                     <StartFrame stars={this.state.stars}/>
-                    <ButtonFrame numberSelect={this.state.selectedNumber} correct={this.state.correct} checkAnswer={this.checkAnswer} />
-                    <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber} />
+                    <ButtonFrame numberSelect={this.state.selectedNumber} correct={this.state.correct} checkAnswer={this.checkAnswer} reset={this.resetGame} />
+                    <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber}  />
                 </div>
-                <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} />
+                <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} resetValue={this.state.resetValue} />
             </div>
         )
     }

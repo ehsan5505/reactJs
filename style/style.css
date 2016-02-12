@@ -42,3 +42,8 @@
     background-color:#c00;
     cursor:not-allowed;
 }
+
+#number-frame .used-true{
+    background-color:#2c2;
+    cursor:not-allowed;
+}
