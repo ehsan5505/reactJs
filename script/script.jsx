@@ -47,6 +47,11 @@ var ButtonFrame = React.createClass({
             <div id="button-frame">
                 <div className="button-frame" >
                     {button}
+                    
+                    <br/>
+                    <button onClick={this.props.redraw} className="btn btn-xs btn-warning"><i className="fa fa-refresh">&nbsp;&nbsp;{this.props.redraws}</i></button>
+                    <br/>
+                    
                 </div>
             </div>
         )
@@ -95,7 +100,8 @@ var Game = React.createClass({
         return {selectedNumber: [],
             stars:Math.floor(Math.random()*9)+1,
             correct: null,
-            resetValue: []
+            resetValue: [],
+            redraws: 5
         };  
     },
     sumOfNumbers: function(){
@@ -128,6 +134,17 @@ var Game = React.createClass({
         correct:null,
         stars:Math.floor(Math.random()*9)+1});
     },
+    redraw:function(){
+        if(this.state.redraws>0){
+            this.setState({
+                selectedNumber:[],
+                correct:null,
+                stars:Math.floor(Math.random()*9)+1,
+                redraws:this.state.redraws-1,
+                resetValue:[]
+            })  
+        }
+    },
     render: function(){
         return (
             <div>
@@ -135,7 +152,7 @@ var Game = React.createClass({
                     <h1>Nine Play</h1>
                     <hr/>
                     <StartFrame stars={this.state.stars}/>
-                    <ButtonFrame numberSelect={this.state.selectedNumber} correct={this.state.correct} checkAnswer={this.checkAnswer} reset={this.resetGame} />
+                    <ButtonFrame numberSelect={this.state.selectedNumber} redraw={this.redraw} redraws={this.state.redraws}  correct={this.state.correct} checkAnswer={this.checkAnswer} reset={this.resetGame} />
                     <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber}  />
                 </div>
                 <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} resetValue={this.state.resetValue} />
