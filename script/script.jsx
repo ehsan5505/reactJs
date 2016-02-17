@@ -49,7 +49,8 @@ var ButtonFrame = React.createClass({
                     {button}
                     
                     <br/>
-                    <button onClick={this.props.redraw} className="btn btn-xs btn-warning"><i className="fa fa-refresh">&nbsp;&nbsp;{this.props.redraws}</i></button>
+                    <button onClick={this.props.redraw} className="btn btn-xs btn-warning" 
+                    disabled={this.props.redraws===0} ><i className="fa fa-refresh">&nbsp;&nbsp;{this.props.redraws}</i></button>
                     <br/>
                     
                 </div>
@@ -95,14 +96,30 @@ var NumberFrame = React.createClass({
     }
 })
 
+var GameStatus = React.createClass({
+    render: function(){
+        var gameStat= this.props.gameStatus;
+    
+    return (
+        <div className="well">
+            <h1>{gameStat}</h1>
+        </div>
+        );
+    } // fn close
+})
+
 var Game = React.createClass({
     getInitialState: function(){
         return {selectedNumber: [],
-            stars:Math.floor(Math.random()*9)+1,
+            stars:this.randomNumber(),
             correct: null,
             resetValue: [],
-            redraws: 5
+            redraws: 5,
+            gameStatus : null
         };  
+    },
+    randomNumber: function(){
+        return (Math.floor(Math.random()*9)+1);
     },
     sumOfNumbers: function(){
         return this.state.selectedNumber.reduce(function(p,n){
@@ -132,20 +149,29 @@ var Game = React.createClass({
         var reset = this.state.resetValue.concat(this.state.selectedNumber);
         this.setState({resetValue:reset,selectedNumber:[],
         correct:null,
-        stars:Math.floor(Math.random()*9)+1});
+        stars:this.randomNumber()});
+        
     },
     redraw:function(){
         if(this.state.redraws>0){
             this.setState({
                 selectedNumber:[],
                 correct:null,
-                stars:Math.floor(Math.random()*9)+1,
+                stars:this.randomNumber(),
                 redraws:this.state.redraws-1,
                 resetValue:[]
             })  
         }
     },
     render: function(){
+        var gameStatus= this.state.gameStatus;
+        var bottomFrame;
+        
+        if(gameStatus){
+            bottomFrame =  <GameStatus gameStatus={this.state.gameStatus} />;  
+        }else{
+            bottomFrame = <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} resetValue={this.state.resetValue} />
+        }
         return (
             <div>
                 <div className="clearfix">
@@ -155,7 +181,9 @@ var Game = React.createClass({
                     <ButtonFrame numberSelect={this.state.selectedNumber} redraw={this.redraw} redraws={this.state.redraws}  correct={this.state.correct} checkAnswer={this.checkAnswer} reset={this.resetGame} />
                     <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber}  />
                 </div>
-                <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} resetValue={this.state.resetValue} />
+                {bottomFrame}
+                        
+                    
             </div>
         )
     }
