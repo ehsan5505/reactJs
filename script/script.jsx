@@ -99,10 +99,15 @@ var NumberFrame = React.createClass({
 var GameStatus = React.createClass({
     render: function(){
         var gameStat= this.props.gameStatus;
-    
+        var init = this.props.reinit;
     return (
-        <div className="well">
+        <div className="well center">
             <h1>{gameStat}</h1>
+            
+            <button className='btn btn-primary' onClick={init}>
+                Play Again
+            </button>
+            
         </div>
         );
     } // fn close
@@ -118,6 +123,47 @@ var Game = React.createClass({
             gameStatus : null
         };  
     },
+    finalizeGame: function(){
+      
+      if(this.state.resetValue.length === 9){
+          this.state.gameStatus = "Well, Done!";
+      }
+      if(this.state.redraws === 9&&!this.possibleComination()){
+          this.state.gameStatus = "Game Over";
+      }
+    },
+    possibleComination: function(){
+        var stars = this.state.stars,
+        usedNumbers = this.state.usedNumbers,
+        possibleNumbers = [];
+        for(var i=1;i<=9;i++){
+            if(usedNumbers.indexOf(i)<0){
+                possibleNumbers.push(i);
+            }
+        }
+        
+        return possibleCombinationSum(possibleNumbers,stars);
+    
+        var possibleCombinationSum = function(arr, n) {
+          if (arr.indexOf(n) >= 0) { return true; }
+          if (arr[0] > n) { return false; }
+          if (arr[arr.length - 1] > n) {
+            arr.pop();
+            return possibleCombinationSum(arr, n);
+          }
+          var listSize = arr.length, combinationsCount = (1 << listSize)
+          for (var i = 1; i < combinationsCount ; i++ ) {
+            var combinationSum = 0;
+            for (var j=0 ; j < listSize ; j++) {
+              if (i & (1 << j)) { combinationSum += arr[j]; }
+            }
+            if (n === combinationSum) { return true; }
+          }
+          return false;
+        };    
+        
+    },
+    
     randomNumber: function(){
         return (Math.floor(Math.random()*9)+1);
     },
@@ -149,7 +195,9 @@ var Game = React.createClass({
         var reset = this.state.resetValue.concat(this.state.selectedNumber);
         this.setState({resetValue:reset,selectedNumber:[],
         correct:null,
-        stars:this.randomNumber()});
+        stars:this.randomNumber()},function(){
+            this.finalizeGame();
+        }); 
         
     },
     redraw:function(){
@@ -160,15 +208,20 @@ var Game = React.createClass({
                 stars:this.randomNumber(),
                 redraws:this.state.redraws-1,
                 resetValue:[]
+            },function(){
+                this.finalizeGame()
             })  
         }
+    },
+    newGame: function(){
+        this.replaceState(this.getInitialState());
     },
     render: function(){
         var gameStatus= this.state.gameStatus;
         var bottomFrame;
         
         if(gameStatus){
-            bottomFrame =  <GameStatus gameStatus={this.state.gameStatus} />;  
+            bottomFrame =  <GameStatus gameStatus={this.state.gameStatus} reinit={this.newGame} />;  
         }else{
             bottomFrame = <NumberFrame disableNumber={this.state.selectedNumber} clicker={this.numberClicker} resetValue={this.state.resetValue} />
         }
@@ -182,7 +235,6 @@ var Game = React.createClass({
                     <AnswerFrame numberSelect={this.state.selectedNumber} unclick={this.unselectNumber}  />
                 </div>
                 {bottomFrame}
-                        
                     
             </div>
         )
